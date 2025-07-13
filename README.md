@@ -1,8 +1,6 @@
 # 🌱 Flowfig - Task Management API
 
-<p align="center">
-  <img src="assets/flowfig-logo.png" alt="Flowfig Logo" width="200"/>
-</p>
+![Flowfig Logo](assets/flowfig-logo.png)
 
 A modern, secure REST API for task management built with Node.js, TypeScript, and Clean Architecture principles.
 
