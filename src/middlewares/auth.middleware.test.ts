@@ -1,3 +1,6 @@
+// Set up environment variables for testing
+process.env.JWT_SECRET = 'mock_secret';
+
 import { Response, NextFunction } from 'express';
 import { authenticateToken } from './auth.middleware';
 
@@ -99,7 +102,7 @@ describe('AuthMiddleware', () => {
       // Then
       expect(mockJwt.verify).toHaveBeenCalledWith(
         'invalid-token',
-        expect.any(String)
+        'mock_secret'
       );
       expect(mockRes.status).toHaveBeenCalledWith(403);
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -126,7 +129,7 @@ describe('AuthMiddleware', () => {
       );
 
       // Then
-      expect(mockJwt.verify).toHaveBeenCalledWith(token, expect.any(String));
+      expect(mockJwt.verify).toHaveBeenCalledWith(token, 'mock_secret');
       expect(mockUserService.findUserById).toHaveBeenCalledWith(1);
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -159,7 +162,7 @@ describe('AuthMiddleware', () => {
       );
 
       // Then
-      expect(mockJwt.verify).toHaveBeenCalledWith(token, expect.any(String));
+      expect(mockJwt.verify).toHaveBeenCalledWith(token, 'mock_secret');
       expect(mockUserService.findUserById).toHaveBeenCalledWith(1);
       expect(mockReq.user).toEqual({
         id: 1,

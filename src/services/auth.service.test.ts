@@ -1,3 +1,6 @@
+// Set up environment variables for testing
+process.env.JWT_SECRET = 'mock_secret';
+
 import { AuthService } from './auth.service';
 
 // Mock bcrypt
@@ -112,11 +115,9 @@ describe('AuthService', () => {
       // Then
       expect(mockUserService.findUserByEmail).toHaveBeenCalledWith(email);
       expect(mockBcrypt.compare).toHaveBeenCalledWith(password, hashedPassword);
-      expect(mockJwt.sign).toHaveBeenCalledWith(
-        { userId },
-        expect.any(String),
-        { expiresIn: '1h' }
-      );
+      expect(mockJwt.sign).toHaveBeenCalledWith({ userId }, 'mock_secret', {
+        expiresIn: '1h',
+      });
       expect(result).toBe(token);
     });
 
@@ -221,11 +222,9 @@ describe('AuthService', () => {
       const result = authService.generateToken(userId);
 
       // Then
-      expect(mockJwt.sign).toHaveBeenCalledWith(
-        { userId },
-        expect.any(String),
-        { expiresIn: '1h' }
-      );
+      expect(mockJwt.sign).toHaveBeenCalledWith({ userId }, 'mock_secret', {
+        expiresIn: '1h',
+      });
       expect(result).toBe(token);
     });
   });
