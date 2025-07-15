@@ -33,7 +33,7 @@ A modern, secure REST API for task management built with Node.js, TypeScript, an
 
 ## 📋 Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - PostgreSQL database
 - Docker & Docker Compose (optional)
 - pnpm package manager
