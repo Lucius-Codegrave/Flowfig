@@ -1,37 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../types';
+import logger from '../logger';
 
 /**
  * Custom error class for application errors
- */
-export class AppError extends Error {
-  public statusCode: number;
-  public isOperational: boolean;
-
-  constructor(message: string, statusCode: number) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = true;
-
-    // Maintains proper stack trace for where our error was thrown
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-/**
- * Global error handling middleware
- * @param error - Error object
- * @param req - Express request object
- * @param res - Express response object
- * @param next - Express next function
+ * This class extends the built-in Error class to include additional properties.
  */
 export const errorHandler = (
   error: Error | AppError,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
-  // Log error for debugging purposes
-  console.error('Error:', error);
+  // Log the error details for debugging
+  logger.error('Error:', error);
+
+  // Check if response object is valid
+  if (!res || typeof res.status !== 'function') {
+    logger.error('Invalid response object in error handler');
+    return;
+  }
 
   // Handle custom application errors with specific status codes
   if (error instanceof AppError) {
@@ -57,20 +45,20 @@ export const errorHandler = (
   }
 
   // Default to 500 server error for unknown errors
-  res.status(500).json({
+  return res.status(500).json({
     message: 'Internal server error',
   });
 };
 
 /**
- * Async error handler wrapper
+ * Async error handler wrapper (generic version)
  * @param fn - Async function to wrap
  * @returns Wrapped function with error handling
  */
-export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+export const asyncHandler = <T extends Request = Request>(
+  fn: (req: T, res: Response, next: NextFunction) => Promise<void> | void
 ) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: T, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };

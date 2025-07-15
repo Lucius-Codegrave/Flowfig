@@ -8,14 +8,16 @@ A modern, secure REST API for task management built with Node.js, TypeScript, an
 
 - **🔐 JWT Authentication** - Secure user registration and login
 - **📝 Complete CRUD Operations** - Create, read, update, delete tasks
-- **👤 User Isolation** - Users can only access their own tasks
+- **� Access Control Lists (ACL)** - Hierarchical permission system
+- **👥 Task Sharing** - Share tasks with other users with granular permissions
+- **👤 User Isolation** - Secure access control with owner privileges
 - **✅ Input Validation** - Comprehensive validation with Zod schemas
 - **🛡️ Security** - Password hashing with bcrypt, JWT token expiration
 - **🏗️ Clean Architecture** - Organized with controllers, services, middlewares
 - **🧪 Comprehensive Testing** - Unit tests with Jest
-- **🐳 Docker Support** - Easy containerization and deployment
+- **🐳 Docker Support** - Easy containerization with hot-reload
 - **🌐 CORS Ready** - Configured for frontend integration
-- **📖 Well Documented** - Extensive code comments and documentation
+- **📖 Well Documented** - Extensive code comments and API documentation
 
 ## 🛠️ Tech Stack
 
@@ -92,3 +94,38 @@ docker-compose up --build
 ```
 
 The API will be available at `http://localhost:3000`
+
+## 🔒 Permission System
+
+Flowfig implements a hierarchical Access Control List (ACL) system:
+
+### Permission Types
+
+- **`READ`** - View only access to tasks
+- **`WRITE`** - Full access (includes READ + modify + delete + share permissions)
+
+### Access Hierarchy
+
+```text
+WRITE
+  ├── Can read tasks ✅
+  ├── Can modify tasks ✅
+  ├── Can delete tasks ✅
+  └── Can grant/revoke permissions ✅
+
+READ
+  ├── Can read tasks ✅
+  ├── Can modify tasks ❌
+  ├── Can delete tasks ❌
+  └── Can grant/revoke permissions ❌
+
+OWNER (automatic)
+  └── Full access to all operations ✅
+```
+
+### Task Sharing
+
+- Task owners can grant permissions to other users
+- Users with WRITE permission can also share tasks
+- One permission per user per task (can be updated)
+- Permissions are automatically checked for all operations

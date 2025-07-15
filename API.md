@@ -99,6 +99,60 @@ Response:
 
 ---
 
+### Permissions
+
+> All permission endpoints require authentication and WRITE permission on the task.
+
+#### Grant Permission
+
+`POST /tasks/:id/permissions/:userId`
+
+Grant a permission to a user for a specific task.
+
+```json
+{
+  "permission": "READ"
+}
+```
+
+**Permissions:**
+
+- `READ` - Can view the task
+- `WRITE` - Can view and modify the task (includes READ permission)
+
+**Response:**
+
+- `201` - Permission granted
+- `200` - Permission updated (if already existed)
+
+#### Revoke Permission
+
+`DELETE /tasks/:id/permissions/:userId`
+
+Revoke all permissions from a user for a specific task.
+
+**Response:**
+
+- `200` - Permission revoked successfully
+
+---
+
+### Permission Hierarchy
+
+The permission system follows a hierarchical model:
+
+- **`READ`** - Read only access
+- **`WRITE`** - Read + write access
+- **Owner & Admin** - Complete control (automatic access to all operations)
+
+**Access Control:**
+
+- `READ` permission: Granted by READ or WRITE permissions
+- `WRITE` permission: Granted only by WRITE permission
+- Task owners: Always have full access regardless of explicit permissions
+
+---
+
 ## Error Format
 
 ```json
@@ -159,6 +213,22 @@ curl -X PATCH http://localhost:3000/tasks/TASK_ID/toggle \
 
 # Delete task
 curl -X DELETE http://localhost:3000/tasks/TASK_ID \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Grant READ permission to user
+curl -X POST http://localhost:3000/tasks/TASK_ID/permissions/USER_ID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"permission":"READ"}'
+
+# Grant WRITE permission to user
+curl -X POST http://localhost:3000/tasks/TASK_ID/permissions/USER_ID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"permission":"WRITE"}'
+
+# Revoke permission from user
+curl -X DELETE http://localhost:3000/tasks/TASK_ID/permissions/USER_ID \
   -H "Authorization: Bearer YOUR_TOKEN"
 
 # Health check

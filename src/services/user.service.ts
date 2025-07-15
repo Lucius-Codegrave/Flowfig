@@ -1,12 +1,6 @@
 import prisma from '../config/db';
-
-/**
- * User data for creating a new user
- */
-export interface CreateUserData {
-  email: string;
-  password: string;
-}
+import logger from '../logger';
+import { CreateUserRequest } from '../types';
 
 /**
  * User service handling user-related database operations
@@ -28,7 +22,9 @@ export class UserService {
    * @param userData - User data to create
    * @returns Created user object
    */
-  async createUser(userData: CreateUserData) {
+  async createUser(userData: CreateUserRequest) {
+    logger.info(`Creating user with email: ${userData.email}`);
+
     return prisma.user.create({
       data: userData,
     });
@@ -39,7 +35,7 @@ export class UserService {
    * @param email - User email address
    * @returns True if user exists, false otherwise
    */
-  async userExists(email: string): Promise<boolean> {
+  async userExists(email: string) {
     const user = await this.findUserByEmail(email);
     return user !== null;
   }

@@ -1,11 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
-import { errorHandler, asyncHandler, AppError } from './error.middleware';
+import { errorHandler, asyncHandler } from './error.middleware';
+import { AppError } from '../types';
+
+// Mock the logger
+jest.mock('../logger', () => ({
+  error: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  debug: jest.fn(),
+}));
+
+// Import the mocked logger to access it in tests
+import logger from '../logger';
+const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('ErrorMiddleware', () => {
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
-  let consoleSpy: jest.SpyInstance;
 
   beforeEach(() => {
     mockReq = {};
@@ -14,12 +26,7 @@ describe('ErrorMiddleware', () => {
       json: jest.fn(),
     };
     mockNext = jest.fn();
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    consoleSpy.mockRestore();
   });
 
   describe('AppError', () => {
@@ -48,7 +55,7 @@ describe('ErrorMiddleware', () => {
       errorHandler(error, mockReq as Request, mockRes as Response, mockNext);
 
       // Then
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Error:', error);
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Custom error',
@@ -63,7 +70,7 @@ describe('ErrorMiddleware', () => {
       errorHandler(error, mockReq as Request, mockRes as Response, mockNext);
 
       // Then
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Error:', error);
       expect(mockRes.status).toHaveBeenCalledWith(409);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Email already used',
@@ -78,7 +85,7 @@ describe('ErrorMiddleware', () => {
       errorHandler(error, mockReq as Request, mockRes as Response, mockNext);
 
       // Then
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Error:', error);
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Invalid email or password',
@@ -93,7 +100,7 @@ describe('ErrorMiddleware', () => {
       errorHandler(error, mockReq as Request, mockRes as Response, mockNext);
 
       // Then
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Error:', error);
       expect(mockRes.status).toHaveBeenCalledWith(500);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Internal server error',

@@ -4,6 +4,7 @@ import authRoutes from './routes/auth.route';
 import taskRoutes from './routes/task.route';
 import { PORT, CORS_ORIGINS } from './config/env';
 import { errorHandler } from './middlewares/error.middleware';
+import logger from './logger';
 
 /**
  * Express application setup for Flowfig API
@@ -52,5 +53,5 @@ app.use(errorHandler);
  * Start server
  */
 app.listen(PORT, () => {
-  console.log(`✅ Flowfig running on http://localhost:${PORT}`);
+  logger.info('✅ Flowfig running on http://localhost:${PORT}');
 });

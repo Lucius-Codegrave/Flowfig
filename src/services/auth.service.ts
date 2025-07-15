@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/env';
 import { UserService } from './user.service';
+import logger from '../logger';
 
 /**
  * Authentication service handling user registration and login logic
@@ -32,6 +33,8 @@ export class AuthService {
 
     // Hash the password
     const hashedPassword = await this.hashPassword(password);
+
+    logger.info(`Registering new user with email: ${email}`);
 
     // Create new user
     const user = await this.userService.createUser({

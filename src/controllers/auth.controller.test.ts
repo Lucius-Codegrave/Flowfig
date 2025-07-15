@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { register, login } from './auth.controller';
 
 // Mock the auth service module
@@ -11,6 +11,7 @@ jest.mock('../services/auth.service', () => ({
 
 // Import the mocked service
 import { authService } from '../services/auth.service';
+import { Role } from '@prisma/client';
 const mockAuthService = authService as jest.Mocked<typeof authService>;
 
 describe('Auth Controller', () => {
@@ -50,6 +51,7 @@ describe('Auth Controller', () => {
         id: 1,
         email: validUserData.email,
         password: 'hashedPassword123',
+        role: Role.EDITOR,
       };
       mockAuthService.registerUser.mockResolvedValue(createdUser);
 
@@ -86,7 +88,7 @@ describe('Auth Controller', () => {
       );
 
       // Then
-      await new Promise((resolve) => setImmediate(resolve)); // Allow any pending promises to resolve
+      await new Promise(resolve => setImmediate(resolve)); // Allow any pending promises to resolve
       expect(mockNext).toHaveBeenCalledWith(error);
       expect(mockStatus).not.toHaveBeenCalled();
     });
@@ -126,7 +128,7 @@ describe('Auth Controller', () => {
       await login(mockRequest as Request, mockResponse as Response, mockNext);
 
       // Then
-      await new Promise((resolve) => setImmediate(resolve)); // Allow any pending promises to resolve
+      await new Promise(resolve => setImmediate(resolve)); // Allow any pending promises to resolve
       expect(mockNext).toHaveBeenCalledWith(error);
       expect(mockStatus).not.toHaveBeenCalled();
     });

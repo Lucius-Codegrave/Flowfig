@@ -17,4 +17,4 @@ COPY . .
 
 RUN npx prisma generate
 
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "dev", "--poll"]

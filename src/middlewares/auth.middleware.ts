@@ -2,24 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/env';
 import { userService } from '../services/user.service';
+import { JWTPayload, Role } from '../types';
 
-/**
- * Extended Request interface to include user information
- */
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    email: string;
-  };
-}
-
-/**
- * JWT payload interface
- */
-interface JWTPayload {
-  userId: number;
-  iat: number;
-  exp: number;
+// Extend Express Request to include user
+declare module 'express' {
+  export interface Request {
+    user?: {
+      id: number;
+      email: string;
+      role: Role;
+    };
+  }
 }
 
 /**
@@ -29,7 +22,7 @@ interface JWTPayload {
  * @param next - Express next function
  */
 export const authenticateToken = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -62,11 +55,12 @@ export const authenticateToken = async (
     req.user = {
       id: user.id,
       email: user.email,
+      role: user.role,
     };
 
     // Continue to next middleware or controller
     next();
-  } catch (error) {
+  } catch {
     // Handle invalid, expired, or malformed tokens
     return res.status(403).json({
       message: 'Invalid or expired token',

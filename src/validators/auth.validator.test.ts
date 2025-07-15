@@ -13,7 +13,7 @@ describe('Auth Validator', () => {
           'test123@domain-name.com',
         ];
 
-        validEmails.forEach((email) => {
+        validEmails.forEach(email => {
           const userData = {
             email,
             password: 'ValidPass123!',
@@ -43,7 +43,7 @@ describe('Auth Validator', () => {
           'test@domain..com',
         ];
 
-        invalidEmails.forEach((email) => {
+        invalidEmails.forEach(email => {
           const userData = {
             email,
             password: 'ValidPass123!',
@@ -102,7 +102,7 @@ describe('Auth Validator', () => {
           'Valid&Password1',
         ];
 
-        validPasswords.forEach((password) => {
+        validPasswords.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -123,7 +123,7 @@ describe('Auth Validator', () => {
         // Given
         const shortPasswords = ['Pass1!', 'Ab1!', '1234567', 'Short1!'];
 
-        shortPasswords.forEach((password) => {
+        shortPasswords.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -181,7 +181,7 @@ describe('Auth Validator', () => {
           'simple$pass1',
         ];
 
-        passwordsWithoutUppercase.forEach((password) => {
+        passwordsWithoutUppercase.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -215,7 +215,7 @@ describe('Auth Validator', () => {
           'SIMPLE$PASS1',
         ];
 
-        passwordsWithoutLowercase.forEach((password) => {
+        passwordsWithoutLowercase.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -249,7 +249,7 @@ describe('Auth Validator', () => {
           'Simple$Pass',
         ];
 
-        passwordsWithoutNumbers.forEach((password) => {
+        passwordsWithoutNumbers.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -282,7 +282,7 @@ describe('Auth Validator', () => {
           'SimplePass1',
         ];
 
-        passwordsWithoutSpecialChars.forEach((password) => {
+        passwordsWithoutSpecialChars.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -317,7 +317,7 @@ describe('Auth Validator', () => {
           'Pass word123!',
         ];
 
-        passwordsWithSpaces.forEach((password) => {
+        passwordsWithSpaces.forEach(password => {
           const userData = {
             email: 'test@example.com',
             password,
@@ -379,11 +379,11 @@ describe('Auth Validator', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           const passwordErrors = result.error.issues.filter(
-            (issue) => issue.path[0] === 'password'
+            issue => issue.path[0] === 'password'
           );
           expect(passwordErrors.length).toBeGreaterThan(1);
 
-          const errorMessages = passwordErrors.map((error) => error.message);
+          const errorMessages = passwordErrors.map(error => error.message);
           expect(errorMessages).toContain(
             'Password must be at least 8 characters long'
           );
@@ -432,10 +432,10 @@ describe('Auth Validator', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           const emailErrors = result.error.issues.filter(
-            (issue) => issue.path[0] === 'email'
+            issue => issue.path[0] === 'email'
           );
           const passwordErrors = result.error.issues.filter(
-            (issue) => issue.path[0] === 'password'
+            issue => issue.path[0] === 'password'
           );
 
           expect(emailErrors.length).toBeGreaterThan(0);

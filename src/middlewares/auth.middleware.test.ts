@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { authenticateToken, AuthenticatedRequest } from './auth.middleware';
+import { Response, NextFunction } from 'express';
+import { authenticateToken } from './auth.middleware';
 
 // Mock jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
@@ -16,13 +16,16 @@ jest.mock('../services/user.service', () => ({
 // Import mocked modules
 import jwt from 'jsonwebtoken';
 import { userService } from '../services/user.service';
+import { AuthenticatedRequest } from '../types';
+
+// Global mock references
+const mockJwt = jwt as any;
+const mockUserService = userService as any;
 
 describe('AuthMiddleware', () => {
   let mockReq: Partial<AuthenticatedRequest>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
-  let mockJwt: any;
-  let mockUserService: any;
 
   beforeEach(() => {
     mockReq = {
@@ -33,8 +36,6 @@ describe('AuthMiddleware', () => {
       json: jest.fn(),
     };
     mockNext = jest.fn();
-    mockJwt = jwt;
-    mockUserService = userService;
     jest.clearAllMocks();
   });
 
@@ -142,6 +143,7 @@ describe('AuthMiddleware', () => {
         id: 1,
         email: 'user@example.com',
         password: 'hashedPassword',
+        role: 'EDITOR' as any,
       };
       mockReq.headers = {
         authorization: `Bearer ${token}`,
@@ -162,6 +164,7 @@ describe('AuthMiddleware', () => {
       expect(mockReq.user).toEqual({
         id: 1,
         email: 'user@example.com',
+        role: 'EDITOR',
       });
       expect(mockNext).toHaveBeenCalled();
       expect(mockRes.status).not.toHaveBeenCalled();

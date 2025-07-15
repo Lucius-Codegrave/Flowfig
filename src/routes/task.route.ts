@@ -6,12 +6,13 @@ import {
   updateTask,
   deleteTask,
   toggleTaskCompletion,
+  grantPermission,
+  revokePermission,
 } from '../controllers/task.controller';
 import { authenticateToken } from '../middlewares/auth.middleware';
 import {
   validateCreateTask,
   validateUpdateTask,
-  validateTaskId,
 } from '../middlewares/validation.middleware';
 
 const router = Router();
@@ -35,20 +36,32 @@ router.post('/', validateCreateTask, createTask);
 // GET /tasks - Get all tasks for authenticated user
 router.get('/', getTasks);
 
-// GET /tasks/:id - Get specific task by ID
-router.get('/:id', validateTaskId, getTaskById);
+// GET /task/:id - Get specific task by ID
+router.get('/:id', getTaskById);
 
-// PUT /tasks/:id - Update task (title, description, completed status)
-router.put('/:id', validateTaskId, validateUpdateTask, updateTask);
+// PUT /task/:id - Update task (title, description, completed status)
+router.put('/:id', validateUpdateTask, updateTask);
 
-// DELETE /tasks/:id - Delete task permanently
-router.delete('/:id', validateTaskId, deleteTask);
+// DELETE /task/:id - Delete task permanently
+router.delete('/:id', deleteTask);
 
 /**
  * Special operations
  */
 
 // PATCH /tasks/:id/toggle - Toggle task completion status
-router.patch('/:id/toggle', validateTaskId, toggleTaskCompletion);
+router.patch('/:id/toggle', toggleTaskCompletion);
+
+/**
+ * Task permissions management
+ * Admins can grant/revoke permissions to other users
+ * Users can only manage their own permission
+ */
+
+// POST /tasks/:id/permissions/:userId - Grant permission to a user
+router.post('/:id/permissions/:userId', grantPermission);
+
+// DELETE /tasks/:id/permissions/:userId - Revoke permission from a user
+router.delete('/:id/permissions/:userId', revokePermission);
 
 export default router;

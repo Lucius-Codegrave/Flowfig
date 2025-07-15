@@ -8,11 +8,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum Permission {
+  READ
+  WRITE
+}
+
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
   password String
-  tasks    Task[]
+  role     Role    @default(EDITOR)
+  
+  // Owned tasks (as creator)
+  ownedTasks    Task[] @relation("TaskOwner")
+  
+  // Granted permissions on tasks
+  taskPermissions TaskPermission[]
+  
+  // Permissions granted by this user
+  grantedPermissions TaskPermission[] @relation("PermissionGrantor")
 }
 
 model Task {
@@ -21,6 +41,39 @@ model Task {
   description String?
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int
+  
+  // Owner (creator) of the task
+  ownerId     Int
+  owner       User     @relation("TaskOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // ACL permissions for this task
+  permissions TaskPermission[]
+}
+
+model TaskPermission {
+  id         Int        @id @default(autoincrement())
+  
+  // Which task this permission applies to
+  taskId     Int
+  task       Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  // Which user has this permission
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // What permission level
+  permission Permission
+
+  // Who granted this permission
+  grantedBy  Int
+  grantor    User       @relation("PermissionGrantor", fields: [grantedBy], references: [id])
+  
+  // When granted and optional expiry
+  grantedAt  DateTime   @default(now())
+  expiresAt  DateTime?
+  
+  // Ensure unique permission per user per task (one permission only)
+  @@unique([taskId, userId])
+  @@index([taskId])
+  @@index([userId])
 }

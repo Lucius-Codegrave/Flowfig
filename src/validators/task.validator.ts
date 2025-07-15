@@ -33,10 +33,3 @@ export const updateTaskSchema = z.object({
     .optional(),
   completed: z.boolean().optional(),
 });
-
-/**
- * Validation schema for task ID parameter
- */
-export const taskIdParamSchema = z.object({
-  id: z.string().regex(/^\d+$/, 'Task ID must be a valid number'),
-});

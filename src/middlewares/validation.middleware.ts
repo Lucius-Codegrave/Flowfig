@@ -3,7 +3,6 @@ import { registerSchema } from '../validators/auth.validator';
 import {
   createTaskSchema,
   updateTaskSchema,
-  taskIdParamSchema,
 } from '../validators/task.validator';
 import z from 'zod';
 
@@ -114,30 +113,5 @@ export const validateUpdateTask = (
 
   // Add validated data to request for use in controller
   req.body = result.data;
-  next();
-};
-
-/**
- * Middleware to validate task ID parameter
- * @param req - Express request object
- * @param res - Express response object
- * @param next - Express next function
- */
-export const validateTaskId = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // Validate task ID parameter format
-  const result = taskIdParamSchema.safeParse(req.params);
-
-  if (!result.success) {
-    // Return validation errors in a structured format
-    return res.status(400).json({
-      errors: z.treeifyError(result.error),
-    });
-  }
-
-  // Continue to next middleware if validation passes
   next();
 };

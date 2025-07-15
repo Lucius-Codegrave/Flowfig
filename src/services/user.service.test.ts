@@ -1,4 +1,4 @@
-import { UserService, CreateUserData } from './user.service';
+import { UserService } from './user.service';
 
 // Mock the db module
 jest.mock('../config/db', () => ({
@@ -13,6 +13,7 @@ jest.mock('../config/db', () => ({
 
 // Import mocked module
 import prisma from '../config/db';
+import { CreateUserRequest } from '../types';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -63,7 +64,7 @@ describe('UserService', () => {
   describe('createUser', () => {
     it('should successfully create a new user', async () => {
       // Given
-      const userData: CreateUserData = {
+      const userData: CreateUserRequest = {
         email: 'newuser@example.com',
         password: 'hashedPassword123',
       };
@@ -85,7 +86,7 @@ describe('UserService', () => {
 
     it('should handle database errors during user creation', async () => {
       // Given
-      const userData: CreateUserData = {
+      const userData: CreateUserRequest = {
         email: 'existing@example.com',
         password: 'hashedPassword123',
       };

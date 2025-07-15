@@ -1,6 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { authService } from '../services/auth.service';
 import { asyncHandler } from '../middlewares/error.middleware';
+import { CreateUserRequest } from '../types/user.types';
+import { LoginRequest } from '../types/auth.types';
 
 /**
  * Register a new user
@@ -10,8 +12,7 @@ import { asyncHandler } from '../middlewares/error.middleware';
  * @returns JSON response with success message or error details
  */
 export const register = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Extract validated email and password from request (validated by middleware)
+  async (req: Request<{}, {}, CreateUserRequest>, res: Response) => {
     const { email, password } = req.body;
 
     // Register user through auth service
@@ -33,8 +34,7 @@ export const register = asyncHandler(
  * @returns JSON response with JWT token or error details
  */
 export const login = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Extract validated email and password from request (validated by middleware)
+  async (req: Request<{}, {}, LoginRequest>, res: Response) => {
     const { email, password } = req.body;
 
     // Authenticate user and get JWT token
