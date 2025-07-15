@@ -5,4 +5,4 @@ node_modules
 /src/generated/prisma
 
 # Local Copilot configuration (not pushed to GitHub)
-.github/
+.github/copilot.md
